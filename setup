@@ -1,1 +1,10 @@
 ln -s ~/dotfiles/.vimrc ~/.vimrc
+git clone https://github.com/powerline/fonts.git ~/.powerlinefonts
+cd ~/.powerlinefonts
+./install.sh
+cd ..
+rm - rf .powerlinefonts
+cd dotfiles
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+git clone https://github.com/jimeh/tmux-themepack.git ~/.tmux-themepack
+ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
