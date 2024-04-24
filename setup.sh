@@ -35,20 +35,19 @@ get_os_ver () {
 
 find_package_manager () {
   get_os_ver
-  if [ "$OS" = Ubuntu || "$OS" = "Debian GNU/Linux" ]
+  if [ "$OS" = Ubuntu ] || [ "$OS" = "Debian GNU/Linux" ]
   then
 	MANAGER="apt-get"
   elif [ "$OS" = "Alpine Linux" ]
   then
 	MANAGER="apk"
-  elif [ \
-	"$OS" = "Amazon Linux" || \
-	"$OS" = "CentOS Linux" || \
-	"$OS" = "Fedora" || \
-	"$OS" = "Fedora Linux" || \
-	"$OS" = "Red Hat Enterprise Linux" || \
-	"$OS" = "Red Hat Enterprise Linux Server" \
-  ]
+  elif \
+	[ "$OS" = "Amazon Linux" ] || \
+	[ "$OS" = "CentOS Linux" ] || \
+	[ "$OS" = "Fedora" ] || \
+	[ "$OS" = "Fedora Linux" ] || \
+	[ "$OS" = "Red Hat Enterprise Linux" ] || \
+	[ "$OS" = "Red Hat Enterprise Linux Server" ]
   then
 	MANAGER="yum"
   else
