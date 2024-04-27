@@ -73,3 +73,5 @@ find_package_manager
 # git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 # git clone https://github.com/jimeh/tmux-themepack.git ~/.tmux-themepack
 # ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
+# TODO: add git setup to configure my name and email address
+# TODO: add env variables to set the default editor to vim
