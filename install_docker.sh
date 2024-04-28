@@ -2,11 +2,11 @@
 
 # Grab the docker install script, make sure you're runnig this script with sudo for this to work
 curl -fsSL https://get.docker.com -o get-docker.sh
-sh ./get-docker.sh
+sudo sh ./get-docker.sh
 
 # setup docker to run as a non-root user
-groupadd docker
-usermod -aG docker $USER
+sudo groupadd docker
+sudo usermod -aG docker $1
 newgrp docker
-systemctl enable docker.service
-systemctl enable containerd.service
+sudo systemctl enable docker.service
+sudo systemctl enable containerd.service
