@@ -6,7 +6,7 @@ sudo sh ./get-docker.sh
 
 # setup docker to run as a non-root user
 sudo groupadd docker
-sudo usermod -aG docker $1
+sudo usermod -aG docker $USER
 newgrp docker
 sudo systemctl enable docker.service
 sudo systemctl enable containerd.service
