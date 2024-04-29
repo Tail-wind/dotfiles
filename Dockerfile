@@ -1,19 +1,19 @@
 # syntax=docker/dockerfile:1
 FROM ubuntu:latest AS ubuntu-test
 COPY setup.sh setup.sh
-RUN ./setup.sh > /var/log/ubuntu_test.log
+RUN ./setup.sh > /var/log/ubuntu_test.log 2>&1
 
 FROM alpine:latest AS alpine-test
 COPY setup.sh setup.sh
-RUN ./setup.sh > /var/log/alpine_test.log
+RUN ./setup.sh > /var/log/alpine_test.log 2>&1
 
 FROM amazonlinux:latest AS amzlinux-test
 COPY setup.sh setup.sh
-RUN ./setup.sh > /var/log/amzlinux_test.log
+RUN ./setup.sh > /var/log/amzlinux_test.log 2>&1
 
 FROM redhat/ubi8:latest AS redhat-test
 COPY setup.sh setup.sh
-RUN ./setup.sh > /var/log/redhat_test.log
+RUN ./setup.sh > /var/log/redhat_test.log 2>&1
 
 FROM scratch AS test-install
 COPY --from=ubuntu-test /var/log/ubuntu_test.log /var/log/ubuntu_test.log
