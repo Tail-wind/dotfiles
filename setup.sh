@@ -37,29 +37,65 @@ find_package_manager () {
   get_os_ver
   if [ "$OS" = Ubuntu ] || [ "$OS" = "Debian GNU/Linux" ]
   then
-	MANAGER="apt-get"
+    MANAGER="apt-get"
   elif [ "$OS" = "Alpine Linux" ]
   then
-	MANAGER="apk"
+    MANAGER="apk"
   elif \
-	[ "$OS" = "Amazon Linux" ] || \
-	[ "$OS" = "CentOS Linux" ] || \
-	[ "$OS" = "Fedora" ] || \
-	[ "$OS" = "Fedora Linux" ] || \
-	[ "$OS" = "Red Hat Enterprise Linux" ] || \
-	[ "$OS" = "Red Hat Enterprise Linux Server" ]
+    [ "$OS" = "Amazon Linux" ] || \
+    [ "$OS" = "CentOS Linux" ] || \
+    [ "$OS" = "Fedora" ] || \
+    [ "$OS" = "Fedora Linux" ] || \
+    [ "$OS" = "Red Hat Enterprise Linux" ] || \
+    [ "$OS" = "Red Hat Enterprise Linux Server" ]
   then
-	MANAGER="yum"
+    MANAGER="yum"
   else
-	# Didn't match any of our known package managers, exit and dump OS info to std:out
-	MANAGER="unknown"
-	echo "Package manager unknown, got OS/version of ${OS}, ${VER}"
-	exit 1
+    # Didn't match any of our known package managers, exit and dump OS info to std:out
+    MANAGER="unknown"
+    echo "Package manager unknown, got OS/version of ${OS}, ${VER}"
+    echo "OS/version not supported"
+    exit 0
   fi
   echo "Package manager to use: ${MANAGER}"
 }
 
+setup_with_apt () {
+  sudo apt-get update
+  sudo apt-get install python3 -y
+  python3 --version
+}
+
+setup_with_apk () {
+  apk update
+  apk add --no-cache python3
+  python3 --version
+}
+
+setup_with_yum () {
+  yum update
+  yum install python3 -y
+  python3 --version
+}
+
+run_setup () {
+  if [ "$MANAGER" = "apt-get" ]
+  then
+    setup_with_apt
+  elif [ "$MANAGER" = "apk" ]
+  then
+    setup_with_apk
+  elif [ "$MANAGER" = "yum" ]
+  then
+    setup_with_yum
+  else
+    echo "Failed to detect package manager during setup"
+  fi
+}
+
 find_package_manager
+run_setup
+
 # pip install powerline-status
 # ln -s ~/dotfiles/.bash_profile ~/.bash_profile
 # ln -s ~/dotfiles/.bashrc ~/.bashrc
