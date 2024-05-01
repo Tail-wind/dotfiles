@@ -73,8 +73,8 @@ setup_with_apk () {
 }
 
 setup_with_yum () {
-  yum update
-  yum install python3 -y
+  sudo yum update
+  sudo yum install python3 -y
   python3 --version
 }
 

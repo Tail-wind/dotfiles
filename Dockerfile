@@ -14,6 +14,7 @@ RUN ./setup.sh > /var/log/amzlinux_test.log 2>&1
 
 FROM redhat/ubi8:latest AS redhat-test
 COPY setup.sh setup.sh
+RUN yum install sudo -y
 RUN ./setup.sh > /var/log/redhat_test.log 2>&1
 
 FROM archlinux:latest AS arch-test
