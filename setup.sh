@@ -91,6 +91,7 @@ run_setup () {
   else
     echo "Failed to detect package manager during setup"
   fi
+  # pip install powerline-status
 }
 
 find_package_manager
