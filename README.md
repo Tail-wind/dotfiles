@@ -5,7 +5,7 @@ Git Repo to store dotfiles for easy transfer between machines
 To run the setup:
 
 ## Step 1
-Install docker using `sudo install-docker.sh`
+Install docker using `install-docker.sh`
 
 ## Step 2
 Run the setup script `setup.sh`

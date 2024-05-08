@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Grab the docker install script, make sure you're runnig this script with sudo for this to work
+# Grab the docker install script
 curl -fsSL https://get.docker.com -o get-docker.sh
 sudo sh ./get-docker.sh
 
