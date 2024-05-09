@@ -1,0 +1,216 @@
+Resources:
+  PubPrivVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 172.31.0.0/16
+      EnableDnsSupport: 'true'
+      EnableDnsHostnames: 'true'
+      Tags:
+        - Key: Name
+          Value: PubPrivVPC
+
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: 172.31.0.0/24
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: PublicSubnet
+
+  PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: 172.31.1.0/24
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet
+
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+      - Key: Name
+        Value: PubPrivIGW
+
+  InternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref PubPrivVPC
+
+  NatGatewayEIP:
+    Type: AWS::EC2::EIP
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      Domain: vpc
+
+  NatGateway:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt NatGatewayEIP.AllocationId
+      SubnetId: !Ref PublicSubnet
+
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      Tags:
+        - Key: Name
+          Value: PubPriv Public Routes
+
+  DefaultPublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: InternetGatewayAttachment
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      SubnetId: !Ref PublicSubnet
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      Tags:
+        - Key: Name
+          Value: PubPriv Private Routes
+
+  DefaultPrivateRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId: !Ref NatGateway
+
+  PrivateSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+
+  PublicSubnetSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      GroupDescription: Allow public access to bastion host
+      GroupName: PublicSubnetSG
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+      Tags:
+        - Key: Name
+          Value: Public Security Group
+
+  K8sConrollerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      GroupDescription: Allow K8s controller ports
+      GroupName: K8sControllerSG
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 6443
+          ToPort: 6443
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 2379
+          ToPort: 2380
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 10250
+          ToPort: 10250
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 10259
+          ToPort: 10259
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 10257
+          ToPort: 10257
+      Tags:
+        - Key: Name
+          Value: K8s Controller Security Group
+
+  K8sNodeSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref PubPrivVPC
+      GroupDescription: Allow K8s node ports
+      GroupName: K8sNodeSG
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 10250
+          ToPort: 10250
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 10256
+          ToPort: 10256
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 30000
+          ToPort: 32767
+      Tags:
+        - Key: Name
+          Value: K8s Node Security Group
+
+  BastionHost:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0776c814353b4814d
+      InstanceType: t2.micro
+      KeyName: eu-west-1_key
+      SecurityGroupIds:
+        - !Ref PublicSubnetSG
+      SubnetId: !Ref PublicSubnet
+      Tags:
+        - Key: Name
+          Value: Bastion Host
+
+  K8sController:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0776c814353b4814d
+      InstanceType: t2.medium
+      KeyName: eu-west-1_key
+      SecurityGroupIds:
+        - !Ref K8sConrollerSG
+      SubnetId: !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: K8s Controller
+
+  K8sWorkerNode:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: ami-0776c814353b4814d
+      InstanceType: t2.micro
+      KeyName: eu-west-1_key
+      SecurityGroupIds:
+        - !Ref K8sNodeSG
+      SubnetId: !Ref PrivateSubnet
+      Tags:
+        - Key: Name
+          Value: K8s Node
