@@ -198,6 +198,16 @@ Resources:
       SecurityGroupIds:
         - !Ref K8sConrollerSG
       SubnetId: !Ref PrivateSubnet
+      UserData:
+        Fn::Base64: |
+          #!/bin/sh
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh ./get-docker.sh
+          sudo groupadd docker
+          sudo usermod -aG docker $USER
+          newgrp docker
+          sudo systemctl enable docker.service
+          sudo systemctl enable containerd.service
       Tags:
         - Key: Name
           Value: K8s Controller
@@ -211,6 +221,16 @@ Resources:
       SecurityGroupIds:
         - !Ref K8sNodeSG
       SubnetId: !Ref PrivateSubnet
+      UserData:
+        Fn::Base64: |
+          #!/bin/sh
+          curl -fsSL https://get.docker.com -o get-docker.sh
+          sudo sh ./get-docker.sh
+          sudo groupadd docker
+          sudo usermod -aG docker $USER
+          newgrp docker
+          sudo systemctl enable docker.service
+          sudo systemctl enable containerd.service
       Tags:
         - Key: Name
           Value: K8s Node
