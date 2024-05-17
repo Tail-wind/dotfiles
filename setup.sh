@@ -112,3 +112,6 @@ run_setup
 # ln -s ~/dotfiles/.tmux.conf ~/.tmux.conf
 # TODO: add git setup to configure my name and email address
 # TODO: add env variables to set the default editor to vim
+# TODO: add aws docker script to path
+# TODO: set a cron job to regularly pull updates of packages/docker images such as:
+#   aws cli docker image

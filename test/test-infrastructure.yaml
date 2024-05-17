@@ -213,7 +213,7 @@ Resources:
           # Install cri-dockerd
           wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.13/cri-dockerd-0.3.13.amd64.tgz
           tar xvf cri-dockerd-0.3.13.amd64.tgz
-          sudo mv ./cri-dockerd /usr/local/bin
+          sudo mv ./cri-dockerd/cri-dockerd /usr/local/bin
           wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
           wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
           sudo mv cri-docker.socket cri-docker.service /etc/systemd/system/
@@ -259,7 +259,7 @@ Resources:
           # Install cri-dockerd
           wget https://github.com/Mirantis/cri-dockerd/releases/download/v0.3.13/cri-dockerd-0.3.13.amd64.tgz
           tar xvf cri-dockerd-0.3.13.amd64.tgz
-          sudo mv ./cri-dockerd /usr/local/bin
+          sudo mv ./cri-dockerd/cri-dockerd /usr/local/bin
           wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.service
           wget https://raw.githubusercontent.com/Mirantis/cri-dockerd/master/packaging/systemd/cri-docker.socket
           sudo mv cri-docker.socket cri-docker.service /etc/systemd/system/

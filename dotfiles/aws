@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# Test to see if credentials were setup
+if [ -f ~/.aws/credentials ];
+then
+  # Stand in for the aws cli, so that it works from docker without needing to be installed
+  docker run --rm -it -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli:latest $@
+else
+  echo "No credentials configured, \
+please ensure that ~./aws/credentials exists \
+and contains a valid set of aws credentials\n"
+  echo "A credentials file (called 'credentals') has the following format:\n\
+[default]\n\
+aws_access_key_id = <Your access key>\n\
+aws_secret_access_key = <your secret key>\n"
+  echo "A config file (called 'config') has the following format:\n\
+[default]\n\
+region = eu-west-1\n\
+output = json"
+fi

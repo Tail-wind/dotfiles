@@ -1,4 +1,0 @@
-#!/bin/sh
-
-# Stand in for the aws cli, so that it works from docker without needing to be installed
-docker run --rm -it amazon/aws-cli:latest $@
